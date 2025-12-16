@@ -1,0 +1,209 @@
+import React, { useState } from 'react';
+import { Coffee, Search, X, ShoppingCart, ChevronRight } from 'lucide-react';
+
+const PabloCafeMenu = () => {
+  const [selectedCategory, setSelectedCategory] = useState('Sıcak İçecekler');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [cart, setCart] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+
+  const categories = ['Sıcak İçecekler', 'Soğuk İçecekler', 'Tatlılar', 'Atıştırmalıklar'];
+
+  const menuItems = {
+    'Sıcak İçecekler': [
+      { id: 1, name: 'Espresso', price: '45₺', desc: 'Yoğun ve aromatik' },
+      { id: 2, name: 'Americano', price: '50₺', desc: 'Sade ve güçlü' },
+      { id: 3, name: 'Cappuccino', price: '65₺', desc: 'Kremalı süt köpüğü ile' },
+      { id: 4, name: 'Latte', price: '70₺', desc: 'Yumuşak ve sütlü' },
+      { id: 5, name: 'Türk Kahvesi', price: '40₺', desc: 'Geleneksel lezzet' },
+      { id: 6, name: 'Filtre Kahve', price: '55₺', desc: 'Hafif ve aromatik' }
+    ],
+    'Soğuk İçecekler': [
+      { id: 7, name: 'Ice Latte', price: '75₺', desc: 'Buzlu sütlü kahve' },
+      { id: 8, name: 'Cold Brew', price: '70₺', desc: 'Soğuk demleme' },
+      { id: 9, name: 'Frappuccino', price: '85₺', desc: 'Kremalı buzlu kahve' },
+      { id: 10, name: 'Limonata', price: '50₺', desc: 'Ev yapımı taze limonata' },
+      { id: 11, name: 'Smoothie', price: '80₺', desc: 'Mevsim meyveleri ile' }
+    ],
+    'Tatlılar': [
+      { id: 12, name: 'Cheesecake', price: '95₺', desc: 'Orman meyveli' },
+      { id: 13, name: 'Tiramisu', price: '90₺', desc: 'İtalyan klasiği' },
+      { id: 14, name: 'Brownie', price: '75₺', desc: 'Sıcak, dondurmalı' },
+      { id: 15, name: 'San Sebastian', price: '85₺', desc: 'Yanık cheesecake' }
+    ],
+    'Atıştırmalıklar': [
+      { id: 16, name: 'Croissant', price: '55₺', desc: 'Tereyağlı, taze' },
+      { id: 17, name: 'Sandviç', price: '85₺', desc: 'Tost veya soğuk' },
+      { id: 18, name: 'Kurabiye', price: '35₺', desc: 'Ev yapımı' },
+      { id: 19, name: 'Muffin', price: '50₺', desc: 'Çeşitli tatlar' }
+    ]
+  };
+
+  const filteredItems = menuItems[selectedCategory].filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const addToCart = (item) => {
+    setCart([...cart, item]);
+  };
+
+  const removeFromCart = (index) => {
+    const newCart = [...cart];
+    newCart.splice(index, 1);
+    setCart(newCart);
+  };
+
+  const getTotalPrice = () => {
+    return cart.reduce((total, item) => {
+      const price = parseInt(item.price.replace('₺', ''));
+      return total + price;
+    }, 0);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-amber-900 via-orange-800 to-amber-900 text-white sticky top-0 z-10 shadow-lg">
+        <div className="max-w-4xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Coffee className="w-8 h-8" />
+              <div>
+                <h1 className="text-2xl font-bold tracking-wide">PABLO CAFE</h1>
+                <p className="text-amber-200 text-sm">Her yudum bir deneyim</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowCart(true)}
+              className="relative bg-white/20 hover:bg-white/30 transition-colors rounded-full p-3"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {cart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  {cart.length}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-amber-600 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Menüde ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 rounded-2xl bg-white shadow-md border-2 border-amber-100 focus:border-amber-400 focus:outline-none transition-all"
+          />
+        </div>
+      </div>
+
+      {/* Categories */}
+      <div className="max-w-4xl mx-auto px-4 pb-4">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-6 py-2.5 rounded-full whitespace-nowrap font-medium transition-all ${
+                selectedCategory === category
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg scale-105'
+                  : 'bg-white text-amber-900 hover:bg-amber-100 shadow'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Menu Items */}
+      <div className="max-w-4xl mx-auto px-4 pb-24">
+        <div className="space-y-3">
+          {filteredItems.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl p-4 shadow-md hover:shadow-xl transition-all border border-amber-100 hover:border-amber-300"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-amber-900">{item.name}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{item.desc}</p>
+                  <p className="text-xl font-bold text-orange-600 mt-2">{item.price}</p>
+                </div>
+                <button
+                  onClick={() => addToCart(item)}
+                  className="ml-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-medium shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+                >
+                  Ekle
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Cart Modal */}
+      {showCart && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl">
+            <div className="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold">Sepetim</h2>
+              <button
+                onClick={() => setShowCart(false)}
+                className="bg-white/20 hover:bg-white/30 rounded-full p-2 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="p-6 overflow-y-auto max-h-96">
+              {cart.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">Sepetiniz boş</p>
+              ) : (
+                <div className="space-y-3">
+                  {cart.map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between bg-amber-50 rounded-xl p-3 border border-amber-200"
+                    >
+                      <div>
+                        <p className="font-semibold text-amber-900">{item.name}</p>
+                        <p className="text-orange-600 font-bold">{item.price}</p>
+                      </div>
+                      <button
+                        onClick={() => removeFromCart(index)}
+                        className="bg-rose-500 hover:bg-rose-600 text-white rounded-lg p-2 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {cart.length > 0 && (
+              <div className="border-t border-amber-200 p-6 bg-gradient-to-b from-white to-amber-50">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-lg font-semibold text-amber-900">Toplam:</span>
+                  <span className="text-2xl font-bold text-orange-600">{getTotalPrice()}₺</span>
+                </div>
+                <button className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all">
+                  Sipariş Ver
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PabloCafeMenu;
